@@ -1,12 +1,13 @@
 ;; Tracks currently active MPRIS2 track and allows easy insertion into a buffer.
 ;;
-;; Usage: 
+;; Usage:
 ;;
 ;;   M-x mpris2-yank-current-track
 
 (defun my/mpris2-property-changed (svc props _)
-  (setq my/*mpris2-metadata*
-		(caar (alist-get "Metadata" props nil nil #'equal))))
+  (when-let ((metadata (alist-get "Metadata" props nil nil #'equal))
+			 (metadata-1 (caar metadata)))
+	(setq my/*mpris2-metadata* metadata-1)))
 
 (defun my/mpris2-current-track ()
   "Returns the name of the last active MPRIS2 track"
