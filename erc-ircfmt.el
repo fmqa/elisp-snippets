@@ -32,7 +32,7 @@
 ;; Macro helper for defining background color transient
 (defmacro erc--fmt-color-define-prefix (name fg color)
   `(transient-define-prefix ,name ()
-     [,(format "%s foreground, ? background" color)
+     [,(format "Foreground: %s; Background: ?" color)
       ("00" (lambda () (erc--fmt-describe-color-white ,color)) (lambda () (interactive) (erc--fmt-insert-color-3 ,fg 0)))
       ("01" (lambda () (erc--fmt-describe-color-black ,color)) (lambda () (interactive) (erc--fmt-insert-color-3 ,fg 1)))
       ("02" (lambda () (erc--fmt-describe-color-blue ,color)) (lambda () (interactive) (erc--fmt-insert-color-3 ,fg 2)))
@@ -72,7 +72,7 @@
 
 ;; Define foreground prefix
 (transient-define-prefix erc--fmt-color-1 ()
-  ["Foreground"
+  ["Foreground: ?"
    ("00" erc--fmt-describe-color-white erc--fmt-color-white)
    ("01" erc--fmt-describe-color-black erc--fmt-color-black)
    ("02" erc--fmt-describe-color-blue erc--fmt-color-blue)
