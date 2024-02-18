@@ -2,7 +2,7 @@
 
 ## erc-ircfmt.el
 
-transient.el-based UI for [IRC formatting control codes](https://modern.ircdocs.horse/formatting.html). 
+[transient.el](https://www.gnu.org/software/emacs/manual/html_mono/transient.html)-based UI for [IRC formatting control codes](https://modern.ircdocs.horse/formatting.html). 
 
 Triggered via `C-c q` in `erc-mode`.
 
@@ -11,4 +11,4 @@ Triggered via `C-c q` in `erc-mode`.
 
 ## mpris2.el
 
-Defines an interactive `mpris2-yank-current-track` function that inserts the current MPRIS2 track & artist name at point.
+Defines an interactive `mpris2-yank-current-track` function that inserts the current [MPRIS2](https://mpris2.readthedocs.io/en/latest/) track & artist name at point.
