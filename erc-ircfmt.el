@@ -50,7 +50,7 @@
       ("14" (lambda () (erc--fmt-describe-color-grey ,color)) (lambda () (interactive) (erc--fmt-insert-color-3 ,fg 14)))
       ("15" (lambda () (erc--fmt-describe-color-lightgrey ,color)) (lambda () (interactive) (erc--fmt-insert-color-3 ,fg 15)))
       ("s" "spoilers" (lambda () (interactive) (erc--fmt-insert-color-3 ,fg ,fg)))
-      ("RET" "none" (lambda () (interactive) (erc--fmt-insert-color-3 ,fg)))]))
+      ("RET" (lambda () (propertize "default" 'face '(:foreground ,color))) (lambda () (interactive) (erc--fmt-insert-color-3 ,fg)))]))
 
 ;; Define background color prefixes
 (erc--fmt-color-define-prefix erc--fmt-color-white 0 "white")
