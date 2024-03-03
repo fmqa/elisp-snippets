@@ -9,6 +9,12 @@ Triggered via `C-c q` in `erc-mode`.
 ![Foreground selection](.assets/ircfmt-1.png?raw=true "Foreground color selection")
 ![Background selection](.assets/ircfmt-2.png?raw=true "Background color selection")
 
+## erc-tts.el
+
+Pipes Erc messages to a TTS program.
+
+Use via `M-x erc-tts-start`. The "TTS program" must be a executable that reads lines to speak on STDIN and outputs sound to your system's preferred sound sink.
+
 ## mpris2.el
 
 Defines an interactive `mpris2-yank-current-track` function that inserts the current [MPRIS2](https://mpris2.readthedocs.io/en/latest/) track & artist name at point.
