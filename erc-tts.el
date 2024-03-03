@@ -1,11 +1,11 @@
-;; Pipes Erc messages into a TTS program
+;; Pipes Erc messages into a TTS program.
 ;;
 ;; Usage:
 ;;   M-x erc-tts-start
-;;   then specify the command line for you TTS program
+;;   then specify the command line for your TTS program
 ;;
 ;; The "TTS program" must be a executable that reads lines to speak on STDIN
-;; and outputs sound
+;; and outputs sound.
 ;;
 ;; For piper-tts aka. https://github.com/rhasspy/piper the following shell wrapper can be used:
 ;;
