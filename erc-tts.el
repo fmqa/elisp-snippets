@@ -1,8 +1,17 @@
 ;; Pipes Erc messages into a TTS program.
 ;;
 ;; Usage:
-;;   M-x erc-tts-start
+;;
+;; M-x erc-tts-start
 ;;   then specify the command line for your TTS program
+;;
+;; Other commands:
+;;
+;; M-x erc-tts-exclude
+;;    excludes a channel from the TTS
+;:
+;; M-x erc-tts-include
+;;    includes a channel (reverts erc-tts-include)
 ;;
 ;; The "TTS program" must be a executable that reads lines to speak on STDIN
 ;; and outputs sound.
@@ -42,6 +51,7 @@
 (defvar erc-tts--process
   nil
   "TTS subprocess. Should be a filter-like program that accepts lines to speak from STDIN")
+(defvar erc-tts--exclude #s(hash-table test eq weakness t))
 
 (defun erc-tts--dispatch (text)
   (when (and erc-tts--process (process-live-p erc-tts--process))
@@ -72,6 +82,10 @@
                (if omit-speaker msg (format "%s says: %s" speaker msg)))
            (format (if is-action "On %s, %s %s" "On %s, %s says: %s") channel-name speaker msg))))))
 
+(defun erc-tts--do-if-included (&rest args)
+  (unless (gethash (current-buffer) erc-tts--exclude)
+    (apply #'erc-tts--do args)))
+
 (defun erc-tts--sentinel (process event)
   (princ (format "Process %s %s" process event) (process-buffer process))
   (when (not (process-live-p process))
@@ -82,7 +96,7 @@
   (when (and (not erc-tts--process) program)
     (when (setq erc-tts--process (start-process-shell-command "erc-tts" "*erc-tts*" program))
       (set-process-sentinel erc-tts--process #'erc-tts--sentinel)
-      (add-hook 'erc-insert-post-hook #'erc-tts--do))))
+      (add-hook 'erc-insert-post-hook #'erc-tts--do-if-included))))
 
 (defun erc-tts-stop ()
   (interactive)
@@ -91,3 +105,11 @@
   (remove-hook 'erc-insert-post-hook #'erc-tts--do)
   (setq erc-tts--last-channel "")
   (setq erc-tts--last-speaker ""))
+
+(defun erc-tts-exclude ()
+  (interactive)
+  (puthash (current-buffer) t erc-tts--exclude))
+
+(defun erc-tts-include ()
+  (interactive)
+  (remhash (current-buffer) erc-tts--exclude))
