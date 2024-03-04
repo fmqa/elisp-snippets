@@ -56,6 +56,7 @@
              (msg (string-trim (substring-no-properties (buffer-substring msg-start msg-end))))
              (speaker (substring-no-properties (buffer-substring speaker-start speaker-end)))
              (channel-name (buffer-name))
+             (is-action (eq ?\* (char-after)))
              (omit-channel
               (let ((channel-name-eq (string-equal channel-name erc-tts--last-channel)))
                 (setq erc-tts--last-channel channel-name)
@@ -66,8 +67,10 @@
                 speaker-name-eq)))
         (erc-tts--dispatch
          (if omit-channel
-             (if omit-speaker msg (format "%s says: %s" speaker msg))
-           (format "On %s, %s says: %s" channel-name speaker msg))))))
+             (if is-action
+                 (format "%s %s" speaker msg)
+               (if omit-speaker msg (format "%s says: %s" speaker msg)))
+           (format (if is-action "On %s, %s %s" "On %s, %s says: %s") channel-name speaker msg))))))
 
 (defun erc-tts--sentinel (process event)
   (princ (format "Process %s %s" process event) (process-buffer process))
