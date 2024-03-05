@@ -36,9 +36,9 @@
         (mark-end (region-end)))
     (save-excursion
       (goto-char mark-end)
-      (insert open)
+      (insert close)
       (goto-char mark-start)
-      (insert close))))
+      (insert open))))
 
 (defun erc-fmt--insert-or-enclose (open &optional close)
   (if (region-active-p)
