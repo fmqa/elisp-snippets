@@ -103,7 +103,7 @@
 
 ;; Main transient menu
 (transient-define-prefix erc-fmt ()
-  ["Formatting/Foreground: ?"
+  ["Foreground color"
    ("00" erc-fmt--describe-color-white erc-fmt-color-white)
    ("01" erc-fmt--describe-color-black erc-fmt-color-black)
    ("02" erc-fmt--describe-color-blue erc-fmt-color-blue)
@@ -119,7 +119,8 @@
    ("12" erc-fmt--describe-color-lightblue erc-fmt-color-lightblue)
    ("13" erc-fmt--describe-color-pink erc-fmt-color-pink)
    ("14" erc-fmt--describe-color-grey erc-fmt-color-grey)
-   ("15" erc-fmt--describe-color-lightgrey erc-fmt-color-lightgrey)
+   ("15" erc-fmt--describe-color-lightgrey erc-fmt-color-lightgrey)]
+  ["Effects"
    ("i"  erc-fmt--describe-italic erc-fmt-italicize)
    ("b"  erc-fmt--describe-bold erc-fmt-boldify)
    ("u"  erc-fmt--describe-underline erc-fmt-underline)])
