@@ -9,7 +9,7 @@ Triggered via `C-c q` in `erc-mode`.
 ![Foreground selection](.assets/ircfmt-1.png?raw=true "Foreground color selection")
 ![Background selection](.assets/ircfmt-2.png?raw=true "Background color selection")
 
-Additionally, provides an `erc-normalize` module to normalize text yanked into the input prompt, restoring transforming ERC text faces into IRC formatting codes.
+Additionally, provides an `erc-normalize` module to normalize text yanked into the input prompt, transforming ERC text faces into IRC formatting codes.
 
 ## erc-tts.el
 
