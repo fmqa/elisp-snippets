@@ -155,8 +155,7 @@ and the given equality predicate."
 (defun erc-normalize-text-enclose-cc (start end fg bg bold italic underline)
   "Given formatting flags FG BG BOLD ITALIC UNDERLINE, enclose the string
 between START and END with the corresponding IRC formatting codes."
-  (let ((open nil)
-        (close nil))
+  (let (open close)
     (when bold (push "\02" open) (push "\02" close))
     (when italic (push "\035" open) (push "\035" close))
     (when underline (push "\037" open) (push "\037" close))
