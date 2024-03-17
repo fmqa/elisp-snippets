@@ -141,7 +141,7 @@
   "Generates face mapper for color codes [0;n] where value is checked
 against get-color-face via pred."
   `(cond
-    ,@(let ((clauses))
+    ,@(let (clauses)
         (while (>= n 0)
           (push `((funcall ,pred (funcall ,get-color-face ,n) ,value) ,n) clauses)
           (setq n (1- n)))
