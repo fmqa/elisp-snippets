@@ -1,5 +1,9 @@
+;; Transient menus for IRC formatting.
+;;
 ;; Adds a `C-c q' keybind to `erc-mode' to pick IRC color formatting codes
-;; via a transient prefix
+;; via a transient prefix.
+;;
+;; Author: Alcor <alcor@tilde.club>
 
 (defmacro erc-fmt--define-color-describer (color n)
   `(defun ,(intern (concat "erc-fmt--describe-color-" color)) (&optional fg)
@@ -127,3 +131,81 @@
 
 ;; Install binding
 (define-key erc-mode-map (kbd "C-c q") 'erc-fmt)
+
+;; Erc module to normalize text inserted at the prompt.
+;; Author: Alcor <alcor@tilde.club>
+
+(defvar erc-normalize-copy-cc t "Copy control codes")
+
+(defmacro erc-normalize-color-mapper (n pred get-color-face value)
+  "Generates face mapper for color codes [0;n] where value is checked
+against get-color-face via pred."
+  `(cond
+    ,@(let ((clauses))
+        (while (>= n 0)
+          (push `((funcall ,pred (funcall ,get-color-face ,n) ,value) ,n) clauses)
+          (setq n (1- n)))
+        clauses)))
+
+(defun erc-normalize-get-color (pred get-color-face value)
+  "Returns the color code for face VALUE given the inverse function GET-COLOR-FACE
+and the given equality predicate."
+  (erc-normalize-color-mapper 98 pred get-color-face value))
+
+(defun erc-normalize-text-enclose-cc (start end fg bg bold italic underline)
+  "Given formatting flags FG BG BOLD ITALIC UNDERLINE, enclose the string
+between START and END with the corresponding IRC formatting codes."
+  (let ((open nil)
+        (close nil))
+    (when bold (push "\02" open) (push "\02" close))
+    (when italic (push "\035" open) (push "\035" close))
+    (when underline (push "\037" open) (push "\037" close))
+    (when (or fg bg)
+      (push (if bg (format "\03%d,%d" (or fg 99) bg) (format "\03%d" fg)) open)
+      (push "\03" close))
+    (when (and open close)
+      (save-excursion
+        (goto-char end)
+        (insert (string-join close))
+        (goto-char start)
+        (insert (string-join open))))))
+
+(defun erc-normalize-text (value start end)
+  "Given a formatted string VALUE between START and END, enclose the
+string the appropriate formatting codes."
+  (let* ((pred (if (listp value) #'member #'equal))
+         (fg (erc-normalize-get-color pred #'erc-get-fg-color-face value))
+         (bg (erc-normalize-get-color pred #'erc-get-bg-color-face value))
+         (bold (funcall pred 'erc-bold-face value))
+         (italic (funcall pred 'erc-italic-face value))
+         (underline (funcall pred 'erc-underline-face value)))
+    (erc-normalize-text-enclose-cc start end fg bg bold italic underline)))
+
+(defun erc-normalize-cc-substitute (str)
+  "Given a formatted string STR, normalize it for sending over IRC,
+substituting ERC faces with corresponding control characters if ERC-NORMALIZE-COPY-CC is T."
+  (with-temp-buffer
+    (insert str)
+    (goto-char (point-min))
+    (when erc-normalize-copy-cc
+      (let ((match nil))
+        (while (setq match (text-property-search-forward 'font-lock-face nil nil))
+          (let ((start (prop-match-beginning match))
+                (end (prop-match-end match))
+                (value (prop-match-value match)))
+            (erc-normalize-text value start end)))))
+    (set-text-properties (point-min) (point-max) nil)
+    (buffer-string)))
+
+(defun erc-normalize-setup ()
+  (add-hook 'yank-transform-functions #'erc-normalize-cc-substitute 70 t))
+
+(define-erc-module normalize nil
+  "This mode removes properties from text inserted at the prompt,
+possibly inserting corresponding control characters."
+  ((add-hook 'erc-mode-hook #'erc-normalize-setup)
+   (unless erc--updating-modules-p (erc-buffer-do #'erc-normalize-setup)))
+  ((remove-hook 'erc-mode-hook #'erc-normalize-setup)
+   (dolist (buffer (erc-buffer-list))
+     (with-current-buffer buffer
+       (remove-hook 'yank-transform-functions #'erc-normalize-cc-substitute t)))))
